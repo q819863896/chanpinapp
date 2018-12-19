@@ -130,7 +130,10 @@
 
                 </div>
                 <div class="signUpBox">
-                    <mt-switch v-model="registration" @click="acceptSign">只显示接受报名项目</mt-switch>
+                    <!-- <mt-switch v-model="registration" @click="sfbm">只显示接受报名项目</mt-switch> -->
+                    <p :class="{signUp: !isshow, ccc: isshow}" id="signUp" @click="toggleBtn">
+                        只显示接受报名项目
+                    </p>
                 </div>
                 <div class="confirmBtn" @click="confirmBtn">搜索产品</div>
 
@@ -252,6 +255,8 @@ import { Toast } from 'mint-ui';
 import Vue from "vue";
 import MuseUI from "muse-ui";
 import 'muse-ui/dist/muse-ui.css';
+var Bmparams = {};
+var Zlparams = {};
 Vue.use(MuseUI);
 export default {
     name: "schAll",
@@ -260,6 +265,7 @@ export default {
             showCoverModel: false, // cover---true:显示//false:隐藏
             prodirState: false,
             proTypeState: false,
+            isshow: true,
             proNameState: false, // 产品名称---state
             sqjg: [],
             sqxw: [],
@@ -323,7 +329,7 @@ export default {
         }
     },
     mounted () {
-        
+        this.toggleBtn();
     },
     methods: {
         // 专业方向
@@ -378,10 +384,10 @@ export default {
             let links = this.dataMaj;
             for(let i = 0; i < links.length; i++) {
                 if (links[i].majorName == this.prodirInp) {
-                    console.log("存在---" + this.prodirInp);
+                    // console.log("存在---" + this.prodirInp);
                     this.prodirInpsz = links[i].majorId
                 } else {
-                    console.log("不存在---" + this.prodirInp);
+                    // console.log("不存在---" + this.prodirInp);
                 }
             }
         },
@@ -426,10 +432,10 @@ export default {
             let links = this.dataType;
             for(let i = 0; i < links.length; i++) {
                 if (links[i].typeName == this.proTypeInp) {
-                    console.log("存在---" + this.proTypeInp);
+                    // console.log("存在---" + this.proTypeInp);
                     this.proTypeInpsz = links[i].typeId
                 } else {
-                    console.log("不存在---" + this.proTypeInp);
+                    // console.log("不存在---" + this.proTypeInp);
                 }
             }
         },
@@ -608,10 +614,10 @@ export default {
             let links = this.prolen;
             for(let i = 0; i < links.length; i++) {
                 if (links[i].lengthName == this.prolenInp) {
-                    console.log("存在---" + this.prolenInp);
+                    // console.log("存在---" + this.prolenInp);
                     this.prolenInpsz = links[i].lengthId
                 } else {
-                    console.log("不存在---" + this.prolenInp);
+                    // console.log("不存在---" + this.prolenInp);
                 }
             }
         },
@@ -681,10 +687,10 @@ export default {
             let links = this.proTime;
             for(let i = 0; i < links.length; i++) {
                 if (links[i].joinTime == this.proTimeInp) {
-                    console.log("存在---" + this.proTimeInp);
+                    // console.log("存在---" + this.proTimeInp);
                     this.proTimeInpsz = links[i].joinId
                 } else {
-                    console.log("不存在---" + this.proTimeInp);
+                    // console.log("不存在---" + this.proTimeInp);
                 }
             }
         },
@@ -700,33 +706,38 @@ export default {
             this.proTimeState = false;
         },
         // 正在报名
-        acceptSign () {
-            console.log(this.registration);
-            // this.$emit("myFun", this.registration)
+        toggleBtn () {
+            // Bmparams = {};
+            this.isshow = !this.isshow;
+            if (this.isshow == true) {
+                console.log("false");
+                Bmparams.acceptSign = "拒绝" // 接受报名
+                console.log(Bmparams);
+                sessionStorage.setItem("homeListBm", "no");
+            } else {
+                console.log("true");
+                Bmparams.acceptSign = "正在报名"  // 接受报名
+                console.log(Bmparams);
+                sessionStorage.setItem("homeListBm", "yes");
+            }
         },
         confirmBtn() {
-            let params = {
-                // pageNo: this.pageNo,
-                // pageSize: this.pageSize
-                // acceptSign: this.registration
+            Zlparams = {
+                
             };
-            this.registration ? (params.acceptSign = this.registration) : "", // 接受报名
-            this.prodirInpsz ? (params.major = this.prodirInpsz) : "", // 专业方向
-            this.proTypeInpsz ? (params.itemType = this.proTypeInpsz) : "", // 项目类型
-            this.proName ? (params.itemName = this.proName) : "", // 产品名称
-            this.enterpriseInp ? (params.itemDirection = this.enterpriseInp) : "", // 企业/部门/科研方向
-            this.prodiffInp ? (params.difficulty = this.prodiffInp) : "",         // 项目对比难度
-            this.prolenInpsz ? (params.itemLength = this.prolenInpsz) : "",         // 项目时长
-            this.longOronInp ? (params.remoteOrField = this.longOronInp) : "",     // 远程/实地
-            this.proTimeInpsz ? (params.joinTime = this.proTimeInpsz) : ""
-            if (params.acceptSign == false) {
-                params.acceptSign = "拒绝"
-            } else if (params.acceptSign) {
-                params.acceptSign = "正在报名"
-            }
-            
+            // this.registration ? (params.acceptSign = this.registration) : "", // 接受报名
+            this.prodirInpsz ? (Zlparams.major = this.prodirInpsz) : "", // 专业方向
+            this.proTypeInpsz ? (Zlparams.itemType = this.proTypeInpsz) : "", // 项目类型
+            this.proName ? (Zlparams.itemName = this.proName) : "", // 产品名称
+            this.enterpriseInp ? (Zlparams.itemDirection = this.enterpriseInp) : "", // 企业/部门/科研方向
+            this.prodiffInp ? (Zlparams.difficulty = this.prodiffInp) : "",         // 项目对比难度
+            this.prolenInpsz ? (Zlparams.itemLength = this.prolenInpsz) : "",         // 项目时长
+            this.longOronInp ? (Zlparams.remoteOrField = this.longOronInp) : "",     // 远程/实地
+            this.proTimeInpsz ? (Zlparams.joinTime = this.proTimeInpsz) : ""
+
+            let params = Object.assign({}, Bmparams, Zlparams);
+
             console.log(params);
-            delete params.acceptSign;
             sessionStorage.setItem("homeParams", JSON.stringify(params));
 
             getListByParam(params).then((res) => {
@@ -734,10 +745,12 @@ export default {
                     sessionStorage.setItem("allList", JSON.stringify(res.datas));
                     this.$router.push({ path: "/datalist" });
                 } else {
-                    let instance = Toast('获取失败');
-                    setTimeout(() => {
-                        instance.close();
-                    }, 2000);
+                    // let instance = Toast('获取失败');
+                    // setTimeout(() => {
+                    //     instance.close();
+                    // }, 2000);
+                    sessionStorage.setItem("allList", JSON.stringify(res.datas));
+                    this.$router.push({ path: "/datalist" });
                 }
             })
         },
@@ -838,6 +851,28 @@ export default {
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                .signUp{
+                    width: 10rem;
+                    height: 2rem;
+                    line-height: 2rem;
+                    background: url(../../../assets/images/signup-true.png) no-repeat .4rem .4rem;
+                    background-size: 1.3rem 1rem;
+                    padding-left: 1.8rem;
+                    // span{
+                    //     padding-left: 1.5rem;
+                    // }
+                }
+                .ccc{
+                    width: 10rem;
+                    height: 2rem;
+                    line-height: 2rem;
+                    background: url(../../../assets/images/signup.png) no-repeat .4rem .4rem;
+                    background-size: 1.3rem 1rem;
+                    padding-left: 1.8rem;
+                    // span{
+                    //     padding-left: 1.5rem;
+                    // }
+                }
             }
 		}
 		.confirmBtn {

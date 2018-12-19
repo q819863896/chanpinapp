@@ -44,7 +44,7 @@
                         </p>
                         <p>
                             <b>专业方向：</b>
-                            <span class="openText" ref="openText" v-if="allText">{{item.parentMajorName}}-{{item.majorName}}</span>
+                            <span class="openText" ref="openTextqwe" v-if="allText">{{item.parentMajorName}}-{{item.majorName}}</span>
                             <span  class="quanbuText" v-if="partText">{{item.parentMajorName}}-{{item.majorName}}</span>
                             <i class="moreText" id="allBtn" @click="allBtn">{{toggleText}}</i>
                             <!-- <i class="partText" id="partBtn" @click="partBtn">部分收起 ↑ </i> -->
@@ -140,11 +140,13 @@ export default {
             shows: false,
             falsePri: true,
             truePri: false,
-            items: []
+            items: [],
+            marToggle: false
         }
     },
     mounted () {
         this.getItemID();
+        // this.showBtn();
     },
     updated () {
         if ($(".box #zzbm").text() == "暂不开放") {
@@ -167,25 +169,9 @@ export default {
             } else {
                 this.toggleText = "全部展开 ↓";
             }
-            // var off = true;
-            // $(".detail").on("click", "#allBtn", function () {
-            //     if (off) {
-            //         $(this).prev().css({
-            //             "overflow": "auto",
-            //             "white-space": "initial",
-            //             "height":"auto"
-            //         });
-            //         $(this).html("部分收起 ↑");
-            //     } else {
-            //         $(this).prev().css({
-            //             "overflow": "hidden",
-            //             "white-space": "nowrap",
-            //             "height":"0.34rem"
-            //         });
-            //         $(this).html("全部展开 ↓");
-            //         off = true;
-            //     }
-            // })
+        },
+        showBtn () {
+            console.log(this.$refs.openTextqwe);
         },
         partBtn () {
             this.$refs.openText.style.height = 1.2+"rem";
@@ -202,26 +188,34 @@ export default {
             getItemDetailById(urlParse(window.location.href)).then((res) => {
                 if (res.status == 0) {
                     this.items = res.datas;
+                } else {
+                    Toast(res.message);
                 }
             })
         },
         pdfFirst (item_desc) {
             console.log(item_desc);
-            this.$router.push({
-                name: "compactPdf",
-                params: {
-                    item_desc
-                }
-            })
+            sessionStorage.setItem("pdfFir", item_desc);
+            // this.$router.push({
+            //     name: "compactPdf",
+            //     params: {
+            //         item_desc
+            //     }
+            // })
+            const {href} = this.$router.resolve({path: "compactPdf"})
+            window.open(href, "_blank");
         },
         pdfSecond (item_stu_feedback) {
             console.log(item_stu_feedback);
-            this.$router.push({
-                name: "stuPdf",
-                params: {
-                    item_stu_feedback
-                }
-            })
+            sessionStorage.setItem("pdfSec", item_stu_feedback)
+            // this.$router.push({
+            //     name: "stuPdf",
+            //     params: {
+            //         item_stu_feedback
+            //     }
+            // })
+            const {href} = this.$router.resolve({path: "stuPdf"})
+            window.open(href, "_blank");
         }
     }
 }

@@ -3,7 +3,7 @@
         
         <div class="viewWord">
             <i class="goback" @click="goback"></i>
-            <p :class="{signUp: !isshow, ccc: isshow}" @click="jsbm">
+            <p v-if="toggle" :class="{signUp: !isshow, ccc: isshow}" @click="jsbm">
                 <span>接受报名</span>
             </p>
         </div>
@@ -32,16 +32,22 @@ export default {
             shownoData: false,
             showyesData: true,
             isshow: true,
-            items: []
+            items: [],
+            toggle: true
         }
     },
     created () {
-        this.items = JSON.parse(sessionStorage.getItem("allList"));
+        // this.items = JSON.parse(sessionStorage.getItem("allList"));
     },
     mounted () {
-        this.jsbm();
+        if (sessionStorage.getItem("homeListBm") == "no") {
+            this.isshow = false;
+        }
+        // this.jsbm();
+        this.getItems();
         let tj = JSON.parse(sessionStorage.getItem("homeParams"));
         console.log(tj);
+        // console.log(sessionStorage.getItem("homeListBm"));
     },
     methods: {
         goback () {
@@ -52,15 +58,20 @@ export default {
         // 接受报名
         jsbm () {
             this.isshow = !this.isshow;
+             this.items = [];
             if (this.isshow == true) {
-                getListByParam(JSON.parse(sessionStorage.getItem("homeParams"))).then((res) => {
-                    this.items = [];
+                let tj = JSON.parse(sessionStorage.getItem("homeParams"));
+                
+                delete(tj["acceptSign"]);
+                // console.log(tj);
+                getListByParam(tj).then((res) => {
                     if (res.status == 0) {
                         this.items = res.datas;
                     } else {
                         this.shownoData = true
                     }
                 })
+                sessionStorage.setItem("dataListBm", "no");
             } else if (this.isshow == false) {
                 let tj = JSON.parse(sessionStorage.getItem("homeParams"));
                 let params = {
@@ -74,8 +85,39 @@ export default {
                         this.shownoData = true
                     }
                 })
+                sessionStorage.setItem("dataListBm", "yes")
             }
-            
+        },
+        getItems () {
+            if (sessionStorage.getItem("homeListBm") == "no") {
+                this.isshow = true;
+                getListByParam(JSON.parse(sessionStorage.getItem("homeParams"))).then((res) => {
+                    this.items = [];
+                    if (res.status == 0) {
+                        this.items = res.datas;
+                    } else {
+                        this.shownoData = true
+                    }
+                })
+                sessionStorage.setItem("dataListBm", "no");
+            }
+            else if (sessionStorage.getItem("homeListBm") == "yes") {
+                this.isshow = false;
+                let tj = JSON.parse(sessionStorage.getItem("homeParams"));
+                let params = {
+                    acceptSign: "正在报名"
+                };
+                Object.assign(params, tj)
+                getListByParam(params).then((res) => {
+                    this.items = [];
+                    if (res.status == 0) {
+                        this.items = res.datas;
+                    } else {
+                        this.shownoData = true
+                    }
+                })
+                sessionStorage.setItem("dataListBm", "yes")
+            }
         }
     }
 }
@@ -118,10 +160,25 @@ export default {
             height: 2rem;
             border: 1px solid #f35e5b;
             color: #f35e5b;
-            margin-top: .5rem;
+            margin-top: .2rem;
             line-height: 2rem;
             border-radius: .4rem;
             background: url(../../assets/images/datalist/chose_red_icon.png) no-repeat .4rem .4rem;
+            background-size: 1.3rem 1rem;
+            padding-left: .5rem;
+            span{
+                padding-left: 1.5rem;
+            }
+        }
+        .ccc{
+            width: 8rem;
+            height: 2rem;
+            border: 1px solid #cccccc;
+            color: #cccccc;
+            margin-top: .2rem;
+            line-height: 2rem;
+            border-radius: .4rem;
+            background: url(../../assets/images/datalist/chose_icon.png) no-repeat .4rem .4rem;
             background-size: 1.3rem 1rem;
             padding-left: .5rem;
             span{
@@ -136,7 +193,7 @@ export default {
         box-sizing: border-box;
         .noImg{
             width: 5rem;
-            height: 6rem;
+            height: 5.5rem;
             display: flex;
             justify-content: center;
             align-items: center;

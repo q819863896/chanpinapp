@@ -1,6 +1,6 @@
 <template>
     <div class="stupdf">
-        <p class="goBack" @click="goBack">返回</p>
+        <!-- <p class="goBack" @click="goBack">返回</p> -->
         <iframe :src="'./pdf/web/viewer.html?file='+pdfSrc" frameborder="0"></iframe>
     </div>
 </template>
@@ -16,15 +16,18 @@ export default {
     },
     mounted () {
         this.getPdf();
+        console.log(sessionStorage.getItem("pdfSec"));
     },
     methods: {
         getPdf () {
             let params = {
-                fileName: this.$route.params.item_stu_feedback
+                fileName: sessionStorage.getItem("pdfSec")
             };
+            console.log(params);
             showImage(params).then((res) => {
                 let blob = new Blob([res], { type: "application/pdf" });
                 this.pdfSrc = window.URL.createObjectURL(blob);
+                console.log(this.pdfSrc);
             })
         },
         goBack () {

@@ -1,6 +1,6 @@
 <template>
     <div class="page">
-        <p class="goBack" @click="goBack">返回</p>
+        <!-- <p class="goBack" @click="goBack">返回</p> -->
         <iframe :src="'./pdf/web/viewer.html?file='+pdfSrc" frameborder="0"></iframe>
     </div>
 </template>
@@ -18,11 +18,12 @@ export default {
     },
     mounted() {
         this.getContractPDF();
+        console.log(sessionStorage.getItem("pdfFir"));
     },
     methods: {
         getContractPDF() {
             let params = {
-                fileName: this.$route.params.item_desc
+                fileName: sessionStorage.getItem("pdfFir")
             };
             console.log(params);
             showImage(params).then((res) => {
@@ -32,7 +33,6 @@ export default {
             })
         },
         goBack () {
-            // this.$router.push({path: "/detail"})
             this.$router.go(-1);
         }
     }

@@ -229,7 +229,6 @@ export default {
     },
     created () {
         // this.jsbm();
-        
     },
     mounted () {
         window.addEventListener('scroll', this.scrollToTop);
@@ -237,7 +236,6 @@ export default {
         this.zydlsz();
         this.getProlocale();
         this.getItemName();
-        this.jsbm();
         // 对比框添加数据
         function addCompareBox(arr){
             var spanStr="";
@@ -304,8 +302,8 @@ export default {
             $(this).find("span").toggle();
         })
 
-        this.items = JSON.parse(sessionStorage.getItem("listItemName"));
-
+        // this.items = JSON.parse(sessionStorage.getItem("listItemName"));
+        // console.log(JSON.parse(sessionStorage.getItem("homeParams")));
     },
 
     updated () {
@@ -341,17 +339,41 @@ export default {
         getItemName () {
             var urlinfo = window.location.href;//获取url
             var userName = urlinfo.split("?")[1].split("=")[1];//拆分url得到”=”後面的参数
-            let viewName = decodeURI(userName);
-            let params = {
-                itemName: viewName
-            };
+            let tranName = userName.replace(/%20/g, "+");
+            let viewName = decodeURI(tranName);
+            // console.log(viewName);
+            
             this.items = [];
-            getListByItemName(params).then((res) => {
-                if (res.status == 0) {
-                    this.items = res.datas;
-                    sessionStorage.setItem("listItemName", JSON.stringify(res.datas));
-                }
-            })
+            if (sessionStorage.getItem("dataListBm") == "yes" ) {
+                this.isshow = false;
+                let dataItemName = JSON.parse(sessionStorage.getItem("homeParams"));
+                console.log(dataItemName);
+                let params = {
+                    itemName: viewName
+                };
+                let paramstwo = Object.assign(params, dataItemName);
+                console.log(paramstwo);
+                getListByItemName(paramstwo).then((res) => {
+                    if (res.status == 0) {
+                        this.items = res.datas;
+                        // sessionStorage.setItem("listItemName", JSON.stringify(res.datas));
+                    }
+                })
+            }
+                
+            else if (sessionStorage.getItem("dataListBm") == "no" ) {
+                this.isshow = false;
+                let params = {
+                    itemName: viewName
+                };
+                getListByItemName(params).then((res) => {
+                    if (res.status == 0) {
+                        this.items = res.datas;
+                        // sessionStorage.setItem("listItemName", JSON.stringify(res.datas));
+                    }
+                })
+            }
+            
         },
         getCom () {
             console.log(document.getElementById("compareInfo").getElementsByClassName("span").innerText);
@@ -366,11 +388,13 @@ export default {
             this.isshow = !this.isshow;
             var urlinfo = window.location.href;//获取url
             var userName = urlinfo.split("?")[1].split("=")[1];//拆分url得到”=”後面的参数
-            let viewName = decodeURI(userName);
-            let params = {
-                itemName: viewName
-            };
+            let tranName = userName.replace(/%20/g, "+");
+            let viewName = decodeURI(tranName);
+            
             if (this.isshow == true) {
+                let params = {
+                    itemName: viewName
+                };
                 getListByItemName(params).then((res) => {
                     if (res.status == 0) {
                         Toast({

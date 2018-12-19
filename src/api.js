@@ -26,8 +26,8 @@ axios.interceptors.response.use(res => {
     return Promise.reject(err);
 });
 
-axios.defaults.baseURL = "http://10.202.203.55:7082";
-// axios.defaults.baseURL = "http://10.149.0.173:7082";        // 武勇文
+// axios.defaults.baseURL = "http://10.202.203.55:7082";
+axios.defaults.baseURL = "http://10.149.0.173:7082";        // 武勇文
 
 axios.defaults.timeout = 1000 * 30;
 axios.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded;charset=utf-8";
